@@ -60,8 +60,8 @@ public class CardGame : MonoBehaviour {
 
 		state = 0;
 
-		PlayerDeck = new List<GameObject>(ZapDeck);
-		EnemyDeck = new List<GameObject>(BlackoutDeck);
+		PlayerDeck = new List<GameObject>(BlackoutDeck);
+		EnemyDeck = new List<GameObject>(ZapDeck);
 
 		SetupPlayerHand ();
 		SetupEnemyHand ();
@@ -78,7 +78,7 @@ public class CardGame : MonoBehaviour {
 	void Update () 
 	{
 		switch (state) {
-		case GameState.STATE_GAMESTART:
+		case (int)GameState.STATE_GAMESTART:
 
 			//first pokemon player clicks on is set as their active pokemon
 			if (Input.GetMouseButtonDown(0)) {
@@ -98,9 +98,9 @@ public class CardGame : MonoBehaviour {
 
 			}
 			break;
-		case GameState.STATE_PLAYERTURN:
+		case (int)GameState.STATE_PLAYERTURN:
 			break;
-		case GameState.STATE_ENEMYTURN:
+		case (int)GameState.STATE_ENEMYTURN:
 			break;
 		}
 
@@ -123,7 +123,7 @@ public class CardGame : MonoBehaviour {
 		if (!CheckForBasicPokemon (Hand)) {
 			//shuffle hand into deck
 			for (int x = 0; x < HandSize; x++) {
-				ZapDeck.Add (Hand[x]);
+				PlayerDeck.Add (Hand[x]);
 				Destroy (Hand [x]);
 			}
 			//draw 7 new cards
@@ -147,7 +147,7 @@ public class CardGame : MonoBehaviour {
 		if (!CheckForBasicPokemon (EnemyInvisibleHand)) {
 			//shuffle hand into deck
 			for (int x = 0; x < HandSize; x++) {
-				BlackoutDeck.Add (EnemyInvisibleHand[x]);
+				EnemyDeck.Add (EnemyInvisibleHand[x]);
 				//Destroy (EnemyHand [x]);
 				Destroy (EnemyInvisibleHand [x]);
 			}
@@ -169,22 +169,22 @@ public class CardGame : MonoBehaviour {
 
 	void PlayerDrawCard()
 	{
-		CardType = Random.Range (0, ZapDeck.Count - 1);
+		CardType = Random.Range (0, PlayerDeck.Count - 1);
 		MyCards.Add (CardType);
-		GameObject go = GameObject.Instantiate (ZapDeck [CardType]) as GameObject;
+		GameObject go = GameObject.Instantiate (PlayerDeck [CardType]) as GameObject;
 		go.transform.SetParent (ScrollView.transform);
 		Vector3 positionCard = new Vector3(((Hand.Count - 1) * 3) + 1, -3, 0);
 		go.transform.transform.position = positionCard;
 		Hand.Add(go);
-		ZapDeck.Remove (ZapDeck[CardType]);
+		PlayerDeck.Remove (PlayerDeck[CardType]);
 	}
 
 	void EnemyDrawCard()
 	{
-		CardType = Random.Range (0, BlackoutDeck.Count - 1);
+		CardType = Random.Range (0, EnemyDeck.Count - 1);
 		EnemyCards.Add(CardType);
-		CardName = BlackoutDeck [CardType].ToString();
-		GameObject invisibleCard = GameObject.Instantiate (BlackoutDeck [CardType]) as GameObject;
+		CardName = EnemyDeck [CardType].ToString();
+		GameObject invisibleCard = GameObject.Instantiate (EnemyDeck [CardType]) as GameObject;
 		//invisibleCard.GetComponent<SpriteRenderer> ().enabled = false;
 		//GameObject go = GameObject.Instantiate (CardBack) as GameObject;
 		//go.transform.SetParent (EnemyScrollView.transform);
@@ -194,7 +194,7 @@ public class CardGame : MonoBehaviour {
 		//EnemyHand.Add(go);
 		EnemyHand.Add(invisibleCard); //----------------------remove this after testing fronts of enemy cards
 		EnemyInvisibleHand.Add (invisibleCard);
-		BlackoutDeck.Remove (BlackoutDeck[CardType]);
+		EnemyDeck.Remove (EnemyDeck[CardType]);
 	}
 
 	void LayoutPlayerPrizeCards()
@@ -202,14 +202,14 @@ public class CardGame : MonoBehaviour {
 		for(int x = 0; x < 6; x++)
 		{
 		//select a card
-		CardType = Random.Range (0, ZapDeck.Count - 1);
+		CardType = Random.Range (0, PlayerDeck.Count - 1);
 
 		//instantiate a card back 
 		GameObject go = GameObject.Instantiate (CardBack) as GameObject;
 		Vector3 position;
 		
 		//instantiate an invisible card
-		GameObject invisiblePrizeCard = GameObject.Instantiate (ZapDeck[CardType]) as GameObject;
+		GameObject invisiblePrizeCard = GameObject.Instantiate (PlayerDeck[CardType]) as GameObject;
 
 		//position the card back
 			switch (x) {
@@ -246,7 +246,7 @@ public class CardGame : MonoBehaviour {
 			}
 		
 			//remove it from the deck
-			ZapDeck.Remove (ZapDeck[CardType]);
+			PlayerDeck.Remove (PlayerDeck[CardType]);
 		}
 	}
 
@@ -255,14 +255,14 @@ public class CardGame : MonoBehaviour {
 		for(int x = 0; x < 6; x++)
 		{
 			//select a card
-			CardType = Random.Range (0, BlackoutDeck.Count - 1);
+			CardType = Random.Range (0, EnemyDeck.Count - 1);
 
 			//instantiate a card back 
 			GameObject go = GameObject.Instantiate (CardBack) as GameObject;
 			Vector3 position;
 
 			//instantiate an invisible card
-			GameObject invisiblePrizeCard = GameObject.Instantiate (BlackoutDeck[CardType]) as GameObject;
+			GameObject invisiblePrizeCard = GameObject.Instantiate (EnemyDeck[CardType]) as GameObject;
 
 			//position the card back
 			switch (x) {
@@ -299,7 +299,7 @@ public class CardGame : MonoBehaviour {
 			}
 
 			//remove it from the deck
-			BlackoutDeck.Remove (BlackoutDeck[CardType]);
+			EnemyDeck.Remove (EnemyDeck[CardType]);
 		}
 	}
 
