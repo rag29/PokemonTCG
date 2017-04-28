@@ -47,8 +47,21 @@ public class CardGame : MonoBehaviour {
 	public GameObject EnemyScrollView;
 	public GameObject ScrollView;
 
+	[SerializeField]
+	List<GameObject> PlayerDeck;
+	[SerializeField]
+	List<GameObject> EnemyDeck;
+
+	enum GameState {STATE_GAMESTART, STATE_PLAYERTURN, STATE_ENEMYTURN};
+	int state;
+
 	// Use this for initialization
 	void Start () {
+
+		state = 0;
+
+		PlayerDeck = new List<GameObject>(ZapDeck);
+		EnemyDeck = new List<GameObject>(BlackoutDeck);
 
 		SetupPlayerHand ();
 		SetupEnemyHand ();
@@ -57,27 +70,41 @@ public class CardGame : MonoBehaviour {
 		LayoutEnemyPrizeCards ();
 
 		ShowPlayerDeck ();
+		ShowEnemyDeck ();
+
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		if (Input.GetMouseButtonDown(0)) {
-			
-			//capture mouse position through a raycast
-			RaycastHit hit;
-			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+		switch (state) {
+		case GameState.STATE_GAMESTART:
 
-			//if the raycast hits a card, handle the game logic
-			if (Physics.Raycast (ray, out hit)) {
-				if (hit.collider.tag == "Card") {
-					GameObject CardClicked = hit.transform.gameObject;
+			//first pokemon player clicks on is set as their active pokemon
+			if (Input.GetMouseButtonDown(0)) {
 
-					//string CardEnemyPlayed = EnemyTurn ();
+				//capture mouse position through a raycast
+				RaycastHit hit;
+				Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+
+				//if the raycast hits a card, handle the game logic
+				if (Physics.Raycast (ray, out hit)) {
+					if (hit.collider.tag == "basic") {
+						GameObject CardClicked = hit.transform.gameObject;
+						print ("holla tochious");
+						//string CardEnemyPlayed = EnemyTurn ();
+					}
 				}
-			}
 
+			}
+			break;
+		case GameState.STATE_PLAYERTURN:
+			break;
+		case GameState.STATE_ENEMYTURN:
+			break;
 		}
+
+
 	}
 
 	void SetupPlayerHand()
@@ -284,15 +311,39 @@ public class CardGame : MonoBehaviour {
 
 			switch (x) {
 			case 0:
-				position = new Vector3 (22, 4.5f, 0);
+				position = new Vector3 (19.5f, 4.5f, 0);
 				go.transform.transform.position = position;
 				break;
 			case 1:
-				position = new Vector3 (21.75f, 4.25f, 0);
+				position = new Vector3 (19.25f, 4.25f, 0);
 				go.transform.transform.position = position;
 				break;
 			case 2:
-				position = new Vector3 (21.5f, 4, 0);
+				position = new Vector3 (19, 4, 0);
+				go.transform.transform.position = position;
+				break;
+			}
+
+		}
+	}
+
+	void ShowEnemyDeck()
+	{
+		for (int x = 0; x < 3; x++) {
+			GameObject go = GameObject.Instantiate (CardBack) as GameObject;
+			Vector3 position;
+
+			switch (x) {
+			case 0:
+				position = new Vector3 (-5, 13.5f, 0);
+				go.transform.transform.position = position;
+				break;
+			case 1:
+				position = new Vector3 (-5.25f, 13.75f, 0);
+				go.transform.transform.position = position;
+				break;
+			case 2:
+				position = new Vector3 (-5.5f, 14, 0);
 				go.transform.transform.position = position;
 				break;
 			}
