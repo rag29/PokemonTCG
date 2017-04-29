@@ -56,12 +56,26 @@ public class CardGame : MonoBehaviour {
 	int state;
 
 	public List<GameObject> playerBench;
+	[SerializeField]
 	GameObject playerActivePokemon;
 
 	public List<GameObject> enemyBench;
+	[SerializeField]
 	GameObject enemyActivePokemon;
 
+	//don't forget to subtract from these every time a pokemon is knocked out
+	//for either player
 	int playerBasicCount = 0;
+	int enemyBasicCount = 0;
+
+	List<GameObject> playerCardBacks = new List<GameObject>();
+	GameObject playerActivePokemonCardBack;
+
+	List<GameObject> enemyCardBacks = new List<GameObject>();
+	GameObject enemyActivePokemonCardBack;
+
+	public bool basicPokemonDoneBeingLayedOut;
+
 	// Use this for initialization
 	void Start () {
 
@@ -79,6 +93,7 @@ public class CardGame : MonoBehaviour {
 		ShowPlayerDeck ();
 		ShowEnemyDeck ();
 
+		basicPokemonDoneBeingLayedOut = false;
 	}
 	
 	// Update is called once per frame
@@ -90,7 +105,7 @@ public class CardGame : MonoBehaviour {
 			//================PLAYER SETUP================================//
 
 			//first pokemon player clicks on is set as their active pokemon
-			if (Input.GetMouseButtonDown(0)) {
+			if (Input.GetMouseButtonDown (0)) {
 
 				//capture mouse position through a raycast
 				RaycastHit hit;
@@ -112,38 +127,97 @@ public class CardGame : MonoBehaviour {
 
 							playerActivePokemon.transform.parent = null;
 
-							Vector3 position = new Vector3(7, 7, 0);
+							Vector3 position = new Vector3 (7, 7, 0);
 							playerActivePokemon.transform.position = position;
 
 							playerActivePokemon.GetComponent<SpriteRenderer> ().enabled = false;
 
-							GameObject playerActiveCardBack = (GameObject)Instantiate (CardBack, playerActivePokemon.transform.position, Quaternion.Euler(0,0,0));
+							GameObject playerActiveCardBack = (GameObject)Instantiate (CardBack, playerActivePokemon.transform.position, Quaternion.Euler (0, 0, 0));
 
-						} else if (playerBasicCount > 1 && playerBasicCount <= 5) {
+							playerCardBacks.Add (playerActiveCardBack);
+
+						} else if (playerBasicCount > 1 && playerBasicCount < 5) {
 							//add the pokemon to the bench list
 							//position the card on the bench
 							//turn off the renderer for that card
 							//instantiate a card back in its place
 
 							GameObject playerCurrentBenchPokemon = hit.transform.gameObject;
-							playerBench.Add(playerCurrentBenchPokemon);
+							playerBench.Add (playerCurrentBenchPokemon);
 
 							playerCurrentBenchPokemon.transform.parent = null;
 
-							Vector3 position2 = new Vector3(((playerBasicCount - 2) * 3) + 1, 4, 0);
+							Vector3 position2 = new Vector3 (((playerBasicCount - 2) * 3) + 1, 4, 0);
 							playerCurrentBenchPokemon.transform.position = position2;
 
 							playerCurrentBenchPokemon.GetComponent<SpriteRenderer> ().enabled = false;
 
-							GameObject playerBenchCardBack = (GameObject)Instantiate (CardBack, playerCurrentBenchPokemon.transform.position, Quaternion.Euler(0,0,0));
+							GameObject playerBenchCardBack = (GameObject)Instantiate (CardBack, playerCurrentBenchPokemon.transform.position, Quaternion.Euler (0, 0, 0));
+
+							playerCardBacks.Add (playerBenchCardBack);
 						}
 						//string CardEnemyPlayed = EnemyTurn ();
 
-						//================ENEMY SETUP================================//
+
+					}
+				}
+
+
+			}
+
+			//================ENEMY SETUP================================//
+			foreach (GameObject card in EnemyInvisibleHand) {
+				if (card.tag == "basic") {
+
+					enemyBasicCount++;
+
+					if (enemyBasicCount == 1) {
+						enemyActivePokemon = card;
+						enemyActivePokemon.transform.parent = null;
+						Vector3 position = new Vector3 (7, 10, 0);
+						enemyActivePokemon.transform.position = position;
+						enemyActivePokemon.GetComponent<SpriteRenderer> ().enabled = false;
+						GameObject enemyActiveCardBack = (GameObject)Instantiate (CardBack, enemyActivePokemon.transform.position, Quaternion.Euler (0, 0, 0));
+						enemyCardBacks.Add (enemyActiveCardBack);
+
+					
+					} else if (enemyBasicCount > 1 && enemyBasicCount < 5) {
+						GameObject enemyCurrentBenchPokemon = card;
+						enemyBench.Add (enemyCurrentBenchPokemon);
+						enemyCurrentBenchPokemon.transform.parent = null;
+						Vector3 position2 = new Vector3 (((enemyBasicCount - 2) * 3) + 1, 13, 0);
+						enemyCurrentBenchPokemon.transform.position = position2;
+						enemyCurrentBenchPokemon.GetComponent<SpriteRenderer> ().enabled = false;
+						GameObject enemyBenchCardBack = (GameObject)Instantiate (CardBack, enemyCurrentBenchPokemon.transform.position, Quaternion.Euler (0, 0, 0));
+						enemyCardBacks.Add (enemyBenchCardBack);
 					}
 				}
 
 			}
+
+			if (basicPokemonDoneBeingLayedOut) {
+				
+				playerActivePokemon.GetComponent<SpriteRenderer> ().enabled = true;
+				enemyActivePokemon.GetComponent<SpriteRenderer> ().enabled = true;
+
+				foreach (GameObject card in playerBench) {
+					card.GetComponent<SpriteRenderer> ().enabled = true;
+				}
+
+				foreach (GameObject card in enemyBench) {
+					card.GetComponent<SpriteRenderer> ().enabled = true;
+				}
+
+				foreach (GameObject back in playerCardBacks) {
+					Destroy (back);
+				}
+
+				foreach (GameObject back in enemyCardBacks) {
+					Destroy (back);
+				}
+			}
+
+			//if enemy basic pokemon hit zero
 			break;
 		case (int)GameState.STATE_PLAYERTURN:
 			break;
@@ -397,6 +471,8 @@ public class CardGame : MonoBehaviour {
 
 		}
 	}
+
+
 	//function to control enemy turn
 
 	//------pick a card at random out of a given category (3 lists for internal - energy, pkmn, trainer)
