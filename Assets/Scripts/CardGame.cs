@@ -138,6 +138,10 @@ public class CardGame : MonoBehaviour {
 
 							playerCardBacks.Add (playerActiveCardBack);
 
+							Hand.Remove (playerActivePokemon);
+
+							ManageHand (Hand);
+
 						} else if (playerBasicCount > 1 && playerBasicCount < 5) {
 							//add the pokemon to the bench list
 							//position the card on the bench
@@ -157,6 +161,10 @@ public class CardGame : MonoBehaviour {
 							GameObject playerBenchCardBack = (GameObject)Instantiate (CardBack, playerCurrentBenchPokemon.transform.position, Quaternion.Euler (0, 0, 0));
 
 							playerCardBacks.Add (playerBenchCardBack);
+
+							Hand.Remove (playerCurrentBenchPokemon);
+
+							ManageHand (Hand);
 						}
 						//string CardEnemyPlayed = EnemyTurn ();
 
@@ -456,15 +464,16 @@ public class CardGame : MonoBehaviour {
 	void SetupEnemyField()
 	{
 		//================ENEMY SETUP================================//
-		foreach (GameObject card in EnemyInvisibleHand) {
-			if (card.tag == "basic") {
+			for(int y = 0; y < EnemyInvisibleHand.Count; y++){
+			
+			if (EnemyInvisibleHand[y].tag == "basic") {
 
 				if (enemyBasicCount < 5) {
 					enemyBasicCount++;
 				}
 
 				if (enemyBasicCount == 1) {
-					enemyActivePokemon = card;
+					enemyActivePokemon = EnemyInvisibleHand[y];
 					//enemyActivePokemon.transform.parent = null;
 					Vector3 position = new Vector3 (7, 10, 0);
 					enemyActivePokemon.transform.position = position;
@@ -472,9 +481,11 @@ public class CardGame : MonoBehaviour {
 					GameObject enemyActiveCardBack = (GameObject)Instantiate (CardBack, enemyActivePokemon.transform.position, Quaternion.Euler (0, 0, 0));
 					enemyCardBacks.Add (enemyActiveCardBack);
 
+					EnemyInvisibleHand.Remove (enemyActivePokemon);
+					ManageHand (EnemyInvisibleHand);
 
 				} else if (enemyBasicCount > 1 && enemyBasicCount < 5) {
-					GameObject enemyCurrentBenchPokemon = card;
+					GameObject enemyCurrentBenchPokemon = EnemyInvisibleHand[y];
 					enemyBench.Add (enemyCurrentBenchPokemon);
 					//enemyCurrentBenchPokemon.transform.parent = null;
 					Vector3 position2 = new Vector3 (((enemyBasicCount - 2) * 3) + 1, 13, 0);
@@ -482,6 +493,9 @@ public class CardGame : MonoBehaviour {
 					enemyCurrentBenchPokemon.GetComponent<SpriteRenderer> ().enabled = false;
 					GameObject enemyBenchCardBack = (GameObject)Instantiate (CardBack, enemyCurrentBenchPokemon.transform.position, Quaternion.Euler (0, 0, 0));
 					enemyCardBacks.Add (enemyBenchCardBack);
+
+					EnemyInvisibleHand.Remove (enemyCurrentBenchPokemon);
+					ManageHand (EnemyInvisibleHand);
 				}
 			}
 
@@ -489,6 +503,20 @@ public class CardGame : MonoBehaviour {
 
 		isEnemyFieldSetup = true;
 	}
+		
+	void ManageHand(List<GameObject> hand)
+	{
+		for (int x = 0; x < hand.Count; x++) {
+			int xPos = ((x - 1) * 3) + 1;
+			hand [x].transform.position = new Vector3 (xPos, hand [x].transform.position.y, 0);
+		}
+	}
 
-
+	void ManageBench(List<GameObject> bench)
+	{
+		for (int x = 0; x < bench.Count; x++) {
+			int xPos = ((x - 2) * 3) + 1;
+			bench [x].transform.position = new Vector3 (xPos, bench [x].transform.position.y, 0);
+		}
+	}
 }
