@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
+using random = UnityEngine.Random;
+using UnityEngine.SceneManagement;
 
 public class CardGame : MonoBehaviour {
 
@@ -78,6 +81,19 @@ public class CardGame : MonoBehaviour {
 
 	bool isEnemyFieldSetup = false;
 
+	bool reSetupHand = false;
+
+	//the boolean used to determine the deck blink feature until the player draws a card each turn
+	bool deckShow = false;
+
+	public GameObject groupObj;
+
+	bool playerNeedsToDrawCard = true;
+
+	bool deckNeedsToBlink;
+
+	public static int attackDamage;
+
 	// Use this for initialization
 	void Start () {
 
@@ -96,6 +112,8 @@ public class CardGame : MonoBehaviour {
 		ShowEnemyDeck ();
 
 		basicPokemonDoneBeingLayedOut = false;
+
+		attackDamage = 0;
 	}
 	
 	// Update is called once per frame
@@ -199,11 +217,16 @@ public class CardGame : MonoBehaviour {
 				foreach (GameObject back in enemyCardBacks) {
 					Destroy (back);
 				}
-			}
 
-			//if enemy basic pokemon hit zero
+				state = 1;
+			}
 			break;
 		case (int)GameState.STATE_PLAYERTURN:
+			if (playerNeedsToDrawCard) {
+				
+				InvokeRepeating ("BlinkPlayerDeck", 0, 1f);
+
+			}
 			break;
 		case (int)GameState.STATE_ENEMYTURN:
 			break;
@@ -226,32 +249,37 @@ public class CardGame : MonoBehaviour {
 
 		//if the player doesn't have a basic pokemon in their hand
 		if (!CheckForBasicPokemon (Hand)) {
+			bool reSetupHand = false;
 			//shuffle hand into deck
 			for (int x = 0; x < HandSize; x++) {
 				PlayerDeck.Add (Hand[x]);
 				Destroy (Hand [x]);
 			}
 			//draw 7 new cards
-			SetupPlayerHand();
-
+			if (!reSetupHand) {
+				SetupPlayerHand ();
+				reSetupHand = true;
+			}
 		}
 	}
 
 	void SetupEnemyHand()
 	{
-		
 		//create and populate the enemy hand
 		if (!enemyHandInstantiated) {
-			EnemyHand = new List<GameObject> ();
+			EnemyInvisibleHand = new List<GameObject> ();
 			enemyHandInstantiated = true;
 		}
 
-		for (int x = 0; x < HandSize; x++) {
-			EnemyDrawCard ();
+		if (!reSetupHand) {
+			for (int x = 0; x < HandSize; x++) {
+				EnemyDrawCard ();
+			}
 		}
 
 		if (!CheckForBasicPokemon (EnemyInvisibleHand)) {
-			
+			reSetupHand = false;
+			print ("Enemy basic check failed");
 			//shuffle hand into deck
 			for (int x = 0; x < HandSize; x++) {
 				EnemyDeck.Add (EnemyInvisibleHand[x]);
@@ -261,7 +289,16 @@ public class CardGame : MonoBehaviour {
 
 			}
 			//draw 7 new cards
-			SetupEnemyHand();
+			if (!reSetupHand) {
+				try{
+				SetupEnemyHand ();
+				}
+				catch(StackOverflowException e) {
+					SceneManager.LoadScene ("Scene1");
+				}
+
+				reSetupHand = true;
+			}
 		}
 	}
 
@@ -278,7 +315,7 @@ public class CardGame : MonoBehaviour {
 
 	void PlayerDrawCard()
 	{
-		CardType = Random.Range (0, PlayerDeck.Count - 1);
+		CardType = random.Range (0, PlayerDeck.Count - 1);
 		MyCards.Add (CardType);
 		GameObject go = GameObject.Instantiate (PlayerDeck [CardType]) as GameObject;
 		go.transform.SetParent (ScrollView.transform);
@@ -290,8 +327,8 @@ public class CardGame : MonoBehaviour {
 
 	void EnemyDrawCard()
 	{
-		
-		CardType = Random.Range (0, EnemyDeck.Count - 1);
+		print ("Enemy draw card");
+		CardType = random.Range (0, EnemyDeck.Count - 1);
 		EnemyCards.Add(CardType);
 		CardName = EnemyDeck [CardType].ToString();
 		GameObject invisibleCard = GameObject.Instantiate (EnemyDeck [CardType]) as GameObject;
@@ -312,7 +349,7 @@ public class CardGame : MonoBehaviour {
 		for(int x = 0; x < 6; x++)
 		{
 		//select a card
-		CardType = Random.Range (0, PlayerDeck.Count - 1);
+		CardType = random.Range (0, PlayerDeck.Count - 1);
 
 		//instantiate a card back 
 		GameObject go = GameObject.Instantiate (CardBack) as GameObject;
@@ -365,7 +402,7 @@ public class CardGame : MonoBehaviour {
 		for(int x = 0; x < 6; x++)
 		{
 			//select a card
-			CardType = Random.Range (0, EnemyDeck.Count - 1);
+			CardType = random.Range (0, EnemyDeck.Count - 1);
 
 			//instantiate a card back 
 			GameObject go = GameObject.Instantiate (CardBack) as GameObject;
@@ -415,9 +452,13 @@ public class CardGame : MonoBehaviour {
 
 	void ShowPlayerDeck()
 	{
+		
 		for (int x = 0; x < 3; x++) {
 			GameObject go = GameObject.Instantiate (CardBack) as GameObject;
 			Vector3 position;
+			go.AddComponent<BoxCollider> ();
+			go.tag = "deck";
+			go.transform.parent = groupObj.transform;
 
 			switch (x) {
 			case 0:
@@ -518,5 +559,12 @@ public class CardGame : MonoBehaviour {
 			int xPos = ((x - 2) * 3) + 1;
 			bench [x].transform.position = new Vector3 (xPos, bench [x].transform.position.y, 0);
 		}
+	}
+
+	void BlinkPlayerDeck()
+	{
+		groupObj.SetActive (false);
+		System.Threading.Thread.Sleep(500);
+		groupObj.SetActive (true);
 	}
 }

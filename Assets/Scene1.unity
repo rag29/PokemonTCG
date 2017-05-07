@@ -2701,6 +2701,34 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2, y: 2.78, z: 0.2}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1276511059
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1276511060}
+  m_Layer: 0
+  m_Name: groupObj
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1276511060
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1276511059}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9.879466, y: 8.701222, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 40
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1332951369
 GameObject:
   m_ObjectHideFlags: 0
@@ -3458,6 +3486,14 @@ MonoBehaviour:
   InvisibleEnemyPrizeCards: []
   EnemyScrollView: {fileID: 382441592}
   ScrollView: {fileID: 44464917}
+  PlayerDeck: []
+  EnemyDeck: []
+  playerBench: []
+  playerActivePokemon: {fileID: 0}
+  enemyBench: []
+  enemyActivePokemon: {fileID: 0}
+  basicPokemonDoneBeingLayedOut: 0
+  groupObj: {fileID: 1276511059}
 --- !u!4 &1592276101
 Transform:
   m_ObjectHideFlags: 0

@@ -46,7 +46,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Card.cs" />
      <Compile Include="Assets\Scripts\CardGame.cs" />
+     <Compile Include="Assets\Scripts\EnergyCard.cs" />
+     <Compile Include="Assets\Scripts\Farfetchd.cs" />
+     <Compile Include="Assets\Scripts\MonsterCard.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Users/Rob/Desktop/Unity5.5/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
