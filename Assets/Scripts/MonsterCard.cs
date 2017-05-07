@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class MonsterCard : Card {
 
+	protected string name = "";
+
 	protected int hp = 0;
 
 	protected string type = "";
@@ -20,12 +22,14 @@ public class MonsterCard : Card {
 
 	protected Dictionary<string, int> resistance = new Dictionary<string, int> (); 
 
-	protected string preEvolvedForm = 0;
+	protected string preEvolvedForm = "";
 
 	//the base attack method 
 	//call in each pokemon's attack by calling base.Attack()
 	//this will set the publically accessible variables to be used in the battle resolution
-	void Attack()
+	//if there is not enough energy or the attack cannot happen return false
+	//do check on this base method before setting damage and doing effects
+	bool Attack()
 	{
 		
 	}

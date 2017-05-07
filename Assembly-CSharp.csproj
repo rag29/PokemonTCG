@@ -50,7 +50,15 @@
      <Compile Include="Assets\Scripts\CardGame.cs" />
      <Compile Include="Assets\Scripts\EnergyCard.cs" />
      <Compile Include="Assets\Scripts\Farfetchd.cs" />
+     <Compile Include="Assets\Scripts\Hitmonchan.cs" />
+     <Compile Include="Assets\Scripts\Machoke.cs" />
+     <Compile Include="Assets\Scripts\Machop.cs" />
      <Compile Include="Assets\Scripts\MonsterCard.cs" />
+     <Compile Include="Assets\Scripts\Onix.cs" />
+     <Compile Include="Assets\Scripts\Sandshrew.cs" />
+     <Compile Include="Assets\Scripts\Squirtle.cs" />
+     <Compile Include="Assets\Scripts\Staryu.cs" />
+     <Compile Include="Assets\Scripts\Wartortle.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Users/Rob/Desktop/Unity5.5/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

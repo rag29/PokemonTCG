@@ -6,6 +6,7 @@ public class Farfetchd : MonsterCard {
 
 	// Use this for initialization
 	void Awake () {
+		name = "Farfetch'd";
 		hp = 50;
 		type = "normal";
 		retreatCost = 1;
@@ -15,6 +16,8 @@ public class Farfetchd : MonsterCard {
 	
 	void LeekSlap(){
 		CardGame.attackDamage = 30;
+
+		//put in logic for the effect
 	}
 
 	void PotSmash(){
